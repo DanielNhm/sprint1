@@ -1,0 +1,38 @@
+body{
+    text-align: center;
+    background-color: rgb(122, 152, 152);
+    
+}
+table {
+    border:1px  black;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+}
+td.cell{
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    transition: 0.5s;
+    border: 1px  solid black;
+    background-color: #b1afaf;
+
+}
+
+.unmark{
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    transition: 0.5s;
+    border: 1px  solid black;
+    background-color: #b1afaf;
+}
+.unmark span.x{
+    display: none;
+}
+footer{
+    margin-top: 400px;
+    margin-bottom: 0px;
+    text-shadow: 1px 1px 1px 1px;
+}
