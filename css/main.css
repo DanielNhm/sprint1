@@ -36,3 +36,32 @@ footer{
     margin-bottom: 0px;
     text-shadow: 1px 1px 1px 1px;
 }
+.state{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.hint{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.seconds{
+    text-shadow: 2px;
+}
+.tens{
+    text-shadow: 2px;
+}
+.safeClick{
+    background: rgb(87, 153, 215);
+    border: 1px white solid;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px 1px;
+    text-emphasis-color: white;
+    font-size: bold;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+}
+.safeClick:hover{
+    background-color: rgb(15, 71, 168);
+}
