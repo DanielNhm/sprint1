@@ -9,6 +9,7 @@ const REGULAR = '😃'
 const LOST = '🤯'
 const VICTORY = '😎'
 const HINT = '🕯️'
+var isManually = false
 var gSafeCells = []
 var Interval
 var seconds = 0
@@ -57,10 +58,7 @@ function onInit() {
     countSafeClick = 3
     var elBtn = document.querySelector(".spanSafe")
     elBtn.innerHTML = countSafeClick
-
-
-
-
+    var isManually = false
 
 }
 
@@ -105,11 +103,21 @@ function onCellClicked(i, j) {
         return
     if (!gGame.isOn)
         return
-    if (isFirstCall) {
+    if (isFirstCall && !isManually) {
         Interval = setInterval(startTimer, 10)
         createMines(i, j)
         renderNumbers()
         isFirstCall = false
+    }
+    if (isManually) {
+        createMines(i, j)
+        var element = document.querySelector(`[data-i="${i}"][data-j="${j}"].x`)
+        var parEl = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+        parEl.style.background = '#4b0082'
+        changeColor(i, j)
+        renderNumbers()
+        isFirstCall = false
+        return
     }
     if (isUsed) {
         gCountHint--
@@ -160,7 +168,7 @@ function onCellClicked(i, j) {
         }
 
     }
-   
+
 
     if (gBoard[i][j].isMarked)
         return
@@ -170,6 +178,10 @@ function onCellClicked(i, j) {
     gGame.isShown++
     expandShown(elCell, i, j)
     checkGameOver()
+}
+function changeColor(i, j) {
+    var element = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+    setTimeout(() => { element.style.background = '#b1afaf' }, 1000)
 }
 function renderHint() {
     var elHint = document.querySelector('.hint')
@@ -201,22 +213,29 @@ function addUnmark(cell, i, j) {
 function createMines(row, col) {
     var countMine = gLevel.MINES
 
-    for (var i = 0; i < countMine; i++) {
+    if (!isManually) {
+        for (var i = 0; i < countMine; i++) {
 
-        var dataI = getRandomInt(0, gBoard.length - 1)
-        var dateJ = getRandomInt(0, gBoard[0].length - 1)
-        if (dataI < row + 1 && dataI > row - 1 || dateJ < col + 1 && dataI > col - 1 || dataI === row && dateJ === col) {
-            countMine++
-            continue
+            var dataI = getRandomInt(0, gBoard.length - 1)
+            var dateJ = getRandomInt(0, gBoard[0].length - 1)
+            if (dataI < row + 1 && dataI > row - 1 || dateJ < col + 1 && dataI > col - 1 || dataI === row && dateJ === col) {
+                countMine++
+                continue
+            }
+            if (gBoard[dataI][dateJ].isMine === true) {
+                countMine++
+                continue
+
+            }
+
+            gBoard[dataI][dateJ].isMine = true
+            var eltd = document.querySelector(`[data-i="${dataI}"][data-j="${dateJ}"] .x`)
+            eltd.innerHTML = MINE
         }
-        if (gBoard[dataI][dateJ].isMine === true) {
-            countMine++
-            continue
-
-        }
-
-        gBoard[dataI][dateJ].isMine = true
-        var eltd = document.querySelector(`[data-i="${dataI}"][data-j="${dateJ}"] .x`)
+    }
+    else {
+        gBoard[row][col].isMine = true
+        var eltd = document.querySelector(`[data-i="${row}"][data-j="${col}"] .x`)
         eltd.innerHTML = MINE
     }
 
@@ -229,6 +248,8 @@ function checkGameOver() {
             if (!currCell.isMarked && !currCell.isShown) {
                 return
             }
+            if (currCell.isMarked && !currCell.isMine)
+                return
         }
     }
     var elState = document.querySelector('.state').innerHTML = VICTORY
@@ -373,12 +394,12 @@ function startTimer() {
 
 }
 function onSafeClick() {
-    if(countSafeClick === 0)
+    if (countSafeClick === 0)
         return
     countSafeClick--
     var elBtn = document.querySelector(".spanSafe")
     elBtn.innerHTML = countSafeClick
-    gSafeCells=[]
+    gSafeCells = []
     creatSafeCells()
     var cell = drawNum()
     console.log('cell', cell)
@@ -391,14 +412,14 @@ function onSafeClick() {
 function creatSafeCells() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
-            if(gBoard[i][j].isShown)
-            continue
+            if (gBoard[i][j].isShown)
+                continue
             if (gBoard[i][j].isMine)
                 continue
-            if(gBoard[i][j].isMarked) 
-                continue   
+            if (gBoard[i][j].isMarked)
+                continue
             gSafeCells.push(gBoard[i][j])
-            gSafeCells[gSafeCells.length - 1].i = i 
+            gSafeCells[gSafeCells.length - 1].i = i
             gSafeCells[gSafeCells.length - 1].j = j
         }
     }
@@ -413,6 +434,10 @@ function shuffle() {
         const j = Math.floor(Math.random() * (i + 1));
         [gSafeCells[i], gSafeCells[j]] = [gSafeCells[j], gSafeCells[i]]
     }
+}
+function manuallyCreate() {
+    isManually = !isManually
+
 }
 
 function getRandomInt(min, max) {
